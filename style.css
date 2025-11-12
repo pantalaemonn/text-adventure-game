@@ -1,0 +1,147 @@
+body {
+  margin: 0 auto;
+  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(#945c7f, #35354d);
+}
+
+.container {
+  display: flex;
+  margin: 0 auto;
+  background: radial-gradient(#915b7d, transparent);
+  max-width: 1200px;
+  margin-top: 2rem;
+  border-radius: 2rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  justify-content: center;
+}
+
+.nav {
+  height: 2rem;
+  background-color: #915b7d;
+}
+
+.item {
+  width: 100vh; /* each item takes 50vh as requested */
+  height: 100%;
+  box-sizing: border-box;
+  padding: 2rem;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item2 {
+  width: 100vh; /* each item takes 50vh as requested */
+  height: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(22deg, #4c3e59, transparent);
+  padding: 2rem;
+  max-width: 600px;
+  border-radius: 0rem 0rem 0rem 2rem;
+}
+
+#attackBtn {
+  width: 6rem;
+  height: 2rem;
+  border-radius: 1rem;
+  background: #ad7a9b;
+  font-size: 1rem;
+}
+
+#card {
+  width: 200px;
+  height: 300px;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(45deg, #a7a7a7, transparent);
+  margin-bottom: 2rem;
+}
+
+#enemyCard {
+  width: 200px;
+  height: 300px;
+  border-radius: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(45deg, #f11515, transparent);
+  margin-bottom: 2rem;
+}
+
+#battleLog {
+  color: #d9c9d3;
+}
+
+.cardname {
+  width: 100%;
+  background-color: #54415d;
+  min-height: 2rem;
+  border-radius: 2rem 2rem 0rem 0rem;
+}
+
+.cardname h3 {
+  color: #fff;
+}
+
+.cardstats {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  border-radius: 0rem 0rem 2rem 2rem;
+}
+
+.cardstats h3 {
+  color: #fff;
+  font-size: 2rem;
+}
+
+.power {
+  background: #00b6ff;
+  border-radius: 0rem 2rem 0rem 2rem;
+}
+
+.health {
+  background: #ff6000;
+  border-radius: 2rem 0rem 2rem 0rem;
+}
+
+h3 {
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Card shake animation */
+@keyframes shake {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-5px, 0);
+  }
+  50% {
+    transform: translate(5px, 0);
+  }
+  75% {
+    transform: translate(-5px, 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.damage-animation {
+  animation: shake 0.4s ease;
+}
+
+/* Flash red */
+.flash {
+  background-color: rgba(255, 0, 0, 0.3);
+  transition: background-color 0.4s ease;
+}
