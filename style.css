@@ -16,6 +16,15 @@ body {
   justify-content: center;
 }
 
+#roomBackground {
+  margin: 0 auto;
+  background-image: url("lobby.png");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-repeat: no-repeat;
+}
+
 .nav {
   height: 2rem;
   background-color: #915b7d;
@@ -25,7 +34,7 @@ body {
   width: 100vh; /* each item takes 50vh as requested */
   height: 100%;
   box-sizing: border-box;
-  padding: 2rem;
+  padding-top: 2rem;
   max-width: 600px;
   display: flex;
   flex-direction: column;
@@ -115,6 +124,23 @@ body {
 h3 {
   margin: 0 auto;
   padding: 1rem;
+}
+
+#battleSystem {
+  color: #fff;
+  display: none;
+}
+
+#gameLog {
+  color: #d9c9d3;
+  overflow-y: auto;
+}
+#commandInput {
+  width: 70%;
+  padding: 8px;
+}
+#submitBtn {
+  padding: 8px 12px;
 }
 
 /* Card shake animation */
