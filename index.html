@@ -2,8 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Card Adventure</title>
+    <title>Medallion Master</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&amp;display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <!-- <div class="nav"></div> -->
@@ -30,6 +34,12 @@
           </div>
         </div>
         <div class="item2">
+          <div id="champion">
+            <p>
+              you are the master of the medallions! you've truly caught 'em all.
+              don't sue me, nintendo.
+            </p>
+          </div>
           <!-- Game log -->
           <div id="gameLog"></div>
 
@@ -37,18 +47,12 @@
           <input
             type="text"
             id="commandInput"
-            placeholder="Type a command..."
+            placeholder="Type a command, e.g GO, LOOK, TAKE, TALK, BATTLE..."
           />
           <button id="submitBtn">Enter</button>
 
           <div id="battleLog"></div>
           <button id="attackBtn">Attack!</button>
-        </div>
-        <div id="champion">
-          <h1>
-            You are the Master of the Medallions! You've truly caught 'em all.
-            Don't sue me, Nintendo.
-          </h1>
         </div>
       </div>
     </div>

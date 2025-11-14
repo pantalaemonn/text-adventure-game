@@ -18,7 +18,7 @@ class Card {
 
     // Get card element
     const cardElement = document.querySelector(
-      this.name === "Hero Knight" ? "#card" : "#enemyCard"
+      this.name === "Cass" ? "#card" : "#enemyCard"
     );
 
     // Add animation class
@@ -110,6 +110,7 @@ function markDefeated(opponent) {
 
 // Hook up UI
 const attackBtn = document.getElementById("attackBtn");
+attackBtn.style.display = "none";
 const logDiv = document.getElementById("battleLog");
 
 attackBtn.addEventListener("click", () => {
@@ -125,6 +126,7 @@ attackBtn.addEventListener("click", () => {
   // If enemy died on player's turn
   if (battle.enemyCard.isDefeated()) {
     attackBtn.disabled = true;
+    attackBtn.style.display = "none";
     const opponent = player.currentRoom.characters.find(
       (c) =>
         c.card &&
@@ -151,6 +153,7 @@ attackBtn.addEventListener("click", () => {
     // If player died
     if (battle.playerCard.isDefeated()) {
       attackBtn.disabled = true;
+      attackBtn.style.display = "none";
       document.getElementById("battleSystem").style.display = "none";
       document.getElementById("gameImage").style.display = "block";
       log(player.currentRoom.describe());
@@ -162,6 +165,7 @@ attackBtn.addEventListener("click", () => {
     // If enemy died on enemy's turn
     if (battle.enemyCard.isDefeated()) {
       attackBtn.disabled = true;
+      attackBtn.style.display = "none";
       const opponent = player.currentRoom.characters.find(
         (c) =>
           c.card &&

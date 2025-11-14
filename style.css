@@ -9,11 +9,12 @@ body {
   margin: 0 auto;
   background: radial-gradient(#915b7d, transparent);
   max-width: 1200px;
-  margin-top: 2rem;
+  margin-top: 7rem;
   border-radius: 2rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 10px 10px 70px 0px rgba(0, 0, 0, 0.1);
   align-items: center;
   justify-content: center;
+  border: 0.4rem solid #78517017;
 }
 
 #roomBackground {
@@ -58,6 +59,7 @@ body {
   border-radius: 1rem;
   background: #ad7a9b;
   font-size: 1rem;
+  display: none;
 }
 
 #card {
@@ -140,13 +142,31 @@ h3 {
 #commandInput {
   width: 70%;
   padding: 8px;
+  border-radius: 1rem;
+  margin-top: 1rem;
+  background: linear-gradient(45deg, #332335, transparent);
+  color: #fff;
 }
+
 #submitBtn {
-  padding: 8px 12px;
+  padding: 8px 16px;
+  border-radius: 1rem;
+  background: linear-gradient(45deg, #332335, transparent);
+  color: #d9c9d3;
 }
 
 #champion {
   display: none;
+  color: #fff;
+  font-family: "Major Mono Display", monospace;
+  text-align: left;
+  font-size: 2.6rem;
+}
+
+#champion p {
+  font-family: "Major Mono Display", monospace;
+  text-align: left;
+  font-size: 2.6rem;
 }
 
 /* Card shake animation */

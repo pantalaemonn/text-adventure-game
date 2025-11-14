@@ -5,7 +5,8 @@ class Room {
     description,
     characters = [],
     items = [],
-    roomImage = "main.png"
+    roomImage = "main.png",
+    backgroundImage = "lobby.png"
   ) {
     this.name = name;
     this.description = description;
@@ -13,6 +14,7 @@ class Room {
     this.items = items;
     this.exits = {};
     this.roomImage = roomImage;
+    this.backgroundImage = backgroundImage;
   }
 
   describe() {
@@ -56,7 +58,7 @@ class Player {
     this.name = name;
     this.currentRoom = currentRoom;
     this.inventory = [];
-    this.card = new Card("Hero Knight", 10, 40); // or set after starter selection
+    this.card = new Card("Cass", 10, 40); // or set after starter selection
     this.currentBattle = null;
   }
 
@@ -68,6 +70,9 @@ class Player {
     if (opponent.hasBeenDefeated)
       return `${opponent.name} has already been defeated.`;
     if (!opponent.card) return `${opponent.name} doesn’t have a battle card.`;
+
+    attackBtn.style.display = "inline-block"; // show it
+    attackBtn.disabled = false; // enable it
 
     // Fresh copies so health resets each battle
     const playerCard = new Card(
@@ -95,8 +100,6 @@ class Player {
     renderCard(enemyCard, "enemyCard");
 
     const logDiv = document.getElementById("battleLog");
-    const attackBtn = document.getElementById("attackBtn");
-    attackBtn.disabled = false;
     logDiv.innerHTML = `Battle begins! ${playerCard.name} vs ${enemyCard.name}<br><br>`;
 
     return `You challenge ${opponent.name} to a battle! Press Attack to fight.`;
@@ -151,8 +154,17 @@ class Player {
 
     // Normal movement
     this.currentRoom = nextRoom;
-    updateImage(nextRoom.roomImage, nextRoom.name);
+    updateImage(nextRoom.roomImage, nextRoom.name, nextRoom.backgroundImage);
     gameLog.innerHTML = ""; // clear adventure log
+
+    // Champion check when returning to lobby
+    if (nextRoom.name === "Main Lobby" && hasAllMedallions(this)) {
+      const championDiv = document.getElementById("champion");
+      championDiv.style.display = "block";
+      championDiv.innerHTML =
+        "you are the master of the medallions! you've truly caught 'em all. don't sue me, nintendo.";
+    }
+
     return `You move to the ${nextRoom.name}. ${nextRoom.describe()}`;
   }
 }
@@ -194,10 +206,18 @@ class Game {
 }
 
 // Image updater
-function updateImage(src, alt) {
+function updateImage(src, alt, backgroundSrc = null) {
   const gameImage = document.getElementById("gameImage");
+  const roomBackground = document.getElementById("roomBackground");
+
+  // Foreground image (sprite, NPC, etc.)
   gameImage.src = src;
   gameImage.alt = alt;
+
+  // Background image (unique per room)
+  if (backgroundSrc) {
+    roomBackground.style.backgroundImage = `url(${backgroundSrc})`;
+  }
 }
 
 // Load Local Storage for Defeated Characters
@@ -208,6 +228,20 @@ function loadDefeatedStates(characters) {
       char.hasBeenDefeated = true;
     }
   });
+}
+
+// Check for Win Condition
+function hasAllMedallions(player) {
+  const medallions = [
+    "Starter Medallion",
+    "Northern Medallion",
+    "Eastern Medallion",
+    "Southern Medallion",
+    "Western Medallion",
+  ];
+  return medallions.every((m) =>
+    player.inventory.some((item) => item.name === m)
+  );
 }
 
 // ----- Setup world -----
@@ -231,12 +265,12 @@ const luna = new Character(
   "Luna",
   {
     default:
-      "Welcome, glad you could make it! Want a warm-up battle before you start? Just type 'battle' and then my name!",
+      "Welcome, I've heard a lot about you... You'll need to defeat every wing of this place if you want to be Master of The Medallions, starting with me! If you feel like exploring, you could 'go north' for a start. Or might you like a warm-up battle before you start for your first medallion? Just type 'battle' and then my name!",
   },
   lunaCard
 );
 luna.postBattleDialogue =
-  "You fought bravely… I’ll be cheering you on from here!";
+  "You fought bravely… I’ll be cheering you on from here! Here's a medallion for you.";
 
 const lorenzo = new Character(
   "Lorenzo",
@@ -244,7 +278,7 @@ const lorenzo = new Character(
   lorenzoCard
 );
 lorenzo.postBattleDialogue =
-  "You only won because I'm a kid... I'll be back when I'm older!";
+  "You only won because I'm a kid... I'll be back when I'm older! Until then, take this medallion.";
 
 const isabel = new Character(
   "Isabel",
@@ -270,7 +304,7 @@ const boss = new Character(
   bossCard
 );
 boss.postBattleDialogue =
-  "I- I lost..... You truly are the champion. Head to the lobby for your prize.";
+  "I- I lost..... You truly are the champion, my family will be shocked. Anyway, here's your final medallion. Head to the lobby for your prize.";
 
 // Items
 const booster = new Item("Booster", "Enhances your card’s power.");
@@ -301,10 +335,11 @@ loadDefeatedStates([luna, lorenzo, isabel, flynn, boss]);
 // Rooms
 const mainLobby = new Room(
   "Main Lobby",
-  "You enter a bustling lobby full of adventurers. There's a chest to your left. You see a girl waving at you, is that.. Luna? You should probably talk to her first.",
+  "You enter a bustling lobby full of adventurers. There's a BOOSTER to your left. You see a girl waving at you, is that.. Luna? You should probably talk to her first.",
   [luna, guard, merchant],
   [booster],
-  "main.png"
+  "main.png",
+  "lobby.png"
 );
 
 const northWing = new Room(
@@ -312,7 +347,8 @@ const northWing = new Room(
   "A boy greets you on entering. 'Hey! Pleasure to meet you. I'm Lorenzo. You'll have to beat me in battle if you want to win this thing.",
   [lorenzo],
   [booster],
-  "north.png"
+  "north.png",
+  "north_bg.png"
 );
 
 const eastWing = new Room(
@@ -320,7 +356,8 @@ const eastWing = new Room(
   "A girl greets you on entering. 'So, the young upstart has come for his bounty, huh? I'm Isabel, and you can take it from my cold, dead hands, runt!!",
   [isabel],
   [booster],
-  "east.png"
+  "east.png",
+  "east_bg.png"
 );
 
 const southWing = new Room(
@@ -328,7 +365,8 @@ const southWing = new Room(
   "A man greets you on entering, he appears to be cosplaying a famous Nintendo character?! 'Zelda expects big things of me, I'll have to defeat you if I want to impress her. My name's Link by the wa- I mean, I'm Flynn, nice to meet you warrior!",
   [flynn],
   [booster],
-  "south.png"
+  "south.png",
+  "south_bg.png"
 );
 
 const westWing = new Room(
@@ -336,7 +374,8 @@ const westWing = new Room(
   "The air is heavy with tension, as the lights slowly turn brighter to reveal.... Luna?! 'Yes, sweetheart... I am the only obstacle standing between you and super card stardom. Let us embark on a battle for the ages!'",
   [boss],
   [booster],
-  "west.png"
+  "west.png",
+  "west_bg.png"
 );
 
 // Map North
