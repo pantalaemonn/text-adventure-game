@@ -1,4 +1,3 @@
-// Room
 class Room {
   constructor(
     name,
@@ -9,27 +8,26 @@ class Room {
   ) {
     this.name = name;
     this.description = description;
-    this.characters = characters;
-    this.items = items;
-    this.exits = {};
-    this.roomImage = roomImage;
+    this.characters = characters; // array of Character objects
+    this.items = items; // array of Item objects
+    this.exits = {}; // exits to battle rooms
+    this.roomImage = roomImage; // default image for the room
   }
 
   describe() {
     return `${this.name}: ${this.description}`;
   }
 
-  connect(exitKey, roomObj) {
-    this.exits[exitKey.toLowerCase()] = roomObj;
+  connect(roomName, roomObj) {
+    this.exits[roomName.toLowerCase()] = roomObj;
   }
 }
 
-// Character (now supports an optional card)
 class Character {
-  constructor(name, dialogue, card = null) {
+  constructor(name, dialogue) {
     this.name = name;
-    this.dialogue = dialogue;
-    this.card = card;
+    this.dialogue = dialogue; // object with different dialogue options
+    this.card = card; // optional Card for battling
   }
 
   talk() {
@@ -37,7 +35,6 @@ class Character {
   }
 }
 
-// Item
 class Item {
   constructor(name, description) {
     this.name = name;
@@ -45,13 +42,12 @@ class Item {
   }
 }
 
-// Player
 class Player {
   constructor(name, currentRoom) {
     this.name = name;
     this.currentRoom = currentRoom;
     this.inventory = [];
-    this.card = new Card("Hero Knight", 10, 40); // or set after starter selection
+    this.card = new Card("Hero Knight", 10, 40); // Make null and add selection
     this.currentBattle = null;
   }
 
@@ -63,22 +59,10 @@ class Player {
     if (!opponent.card) return `${opponent.name} doesn’t have a battle card.`;
 
     // Fresh copies so health resets each battle
-    const playerCard = new Card(
-      this.card.name,
-      this.card.power,
-      this.card.health
-    );
-    const enemyCard = new Card(
-      opponent.card.name,
-      opponent.card.power,
-      opponent.card.health
-    );
+    const playerCard = new Card(this.card.name, this.card.power, this.card.health);
+    const enemyCard = new Card(opponent.card.name, opponent.card.power, opponent.card.health);
 
     this.currentBattle = new Battle(playerCard, enemyCard);
-
-    // Show battle div, hide game-image div
-    document.getElementById("battleSystem").style.display = "block";
-    document.getElementById("gameImage").style.display = "none";
 
     // Render to UI
     renderCard(playerCard, "card");
@@ -91,6 +75,7 @@ class Player {
 
     return `You challenge ${opponent.name} to a battle! Press Attack to fight.`;
   }
+}
 
   take(itemName) {
     const item = this.currentRoom.items.find(
@@ -99,7 +84,10 @@ class Player {
     if (item) {
       this.inventory.push(item);
       this.currentRoom.items = this.currentRoom.items.filter((i) => i !== item);
+
+      // Update image when item is taken
       updateImage(`${item.name.toLowerCase()}.png`, item.name);
+      // Base take system
       return `You picked up ${item.name}.`;
     }
     return `No item named ${itemName} here.`;
@@ -110,33 +98,35 @@ class Player {
       (c) => c.name.toLowerCase() === characterName.toLowerCase()
     );
     if (character) {
+      // Update image when talking
       updateImage(`${character.name.toLowerCase()}.png`, character.name);
+      // Base talk function
       return character.talk();
     }
     return `No one named ${characterName} here.`;
   }
 
-  move(exitKey) {
-    const nextRoom = this.currentRoom.exits[exitKey.toLowerCase()];
+  move(roomName) {
+    const nextRoom = this.currentRoom.exits[roomName.toLowerCase()];
     if (nextRoom) {
       this.currentRoom = nextRoom;
+      // Reset to room image
       updateImage(nextRoom.roomImage, nextRoom.name);
       return `You move to the ${nextRoom.name}. ${nextRoom.describe()}`;
     }
-    return `You can't go to ${exitKey} from here.`;
+    return `You can't go to ${roomName} from here.`;
   }
 }
 
-// Game
 class Game {
   constructor(player) {
     this.player = player;
   }
 
   processCommand(command) {
-    const [action, ...rest] = command.split(" ");
+    const [action, target] = command.split(" ");
     const target = rest.join(" ");
-
+    
     switch (action.toLowerCase()) {
       case "talk":
         return this.player.talk(target);
@@ -154,27 +144,19 @@ class Game {
   }
 }
 
-// Image updater
+// Updates left image (character/item)
 function updateImage(src, alt) {
   const gameImage = document.getElementById("gameImage");
   gameImage.src = src;
   gameImage.alt = alt;
 }
 
-// ----- Setup world -----
-// Ensure Card and Battle are loaded before this script
+// Setup world
 
 // Character Cards
 const lunaCard = new Card("Luna", 9, 32);
 const lorenzoCard = new Card("Lorenzo", 10, 34);
 
-// NPCs without battles (define guard/merchant you referenced)
-const guard = new Character("Guard", { default: "Stay vigilant, stranger." });
-const merchant = new Character("Merchant", {
-  default: "I sell rare boosters.",
-});
-
-// Characters with cards
 const luna = new Character(
   "Luna",
   {
@@ -183,10 +165,11 @@ const luna = new Character(
   },
   lunaCard
 );
-
 const lorenzo = new Character(
   "Lorenzo",
-  { default: "Wowzers, you're a grown-up! Go easy on me, okay?" },
+  {
+    default: "Wowzers, you're a grown-up! Go easy on me, okay?",
+  },
   lorenzoCard
 );
 
@@ -209,30 +192,29 @@ const northWing = new Room(
   "north.png"
 );
 
-// Map
+// Room Setup
 mainLobby.connect("north", northWing);
-northWing.connect("south", mainLobby);
+northWing.connect("lobby", mainLobby);
 
-// Player & Game
+// Player & Game Setup
 const player = new Player("Hero", mainLobby);
 const game = new Game(player);
 
-// DOM
+// DOM elements
 const gameLog = document.getElementById("gameLog");
 const commandInput = document.getElementById("commandInput");
 const submitBtn = document.getElementById("submitBtn");
 
-// Log helper
+// Helper to print to log
 function log(message) {
   gameLog.innerHTML += message + "<br>";
-  gameLog.scrollTop = gameLog.scrollHeight;
+  gameLog.scrollTop = gameLog.scrollHeight; // auto-scroll
 }
 
-// Initial state
+// Initial description
 log(player.currentRoom.describe());
-updateImage(player.currentRoom.roomImage, player.currentRoom.name);
 
-// Command handling
+// Handle commands
 submitBtn.addEventListener("click", () => {
   const command = commandInput.value.trim();
   if (command) {
@@ -243,6 +225,7 @@ submitBtn.addEventListener("click", () => {
   }
 });
 
+// Allow pressing Enter
 commandInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") submitBtn.click();
 });

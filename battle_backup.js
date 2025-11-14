@@ -78,6 +78,17 @@ function renderCard(card, elementId) {
   cardElement.querySelector(".health h3").textContent = card.health;
 }
 
+// Create one player card and one enemy card
+const hero = new Card("Hero Knight", 10, 40);
+const enemy = new Card("Goblin", 8, 35);
+
+// Render Card Stats
+renderCard(hero, "card"); // updates the hero card display
+renderCard(enemy, "enemyCard"); // updates the enemy card display
+
+// Create a battle
+const battle = new Battle(hero, enemy);
+
 // Hook up UI
 const logDiv = document.getElementById("battleLog");
 const attackBtn = document.getElementById("attackBtn");
@@ -109,3 +120,6 @@ attackBtn.addEventListener("click", () => {
     attackBtn.disabled = true;
   }
 });
+
+// Initial message
+logDiv.innerHTML = `Battle begins! ${hero.name} vs ${enemy.name}<br><br>`;
