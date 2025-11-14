@@ -87,6 +87,9 @@ class Player {
     document.getElementById("battleSystem").style.display = "block";
     document.getElementById("gameImage").style.display = "none";
 
+    // Clear game log
+    gameLog.innerHTML = "";
+
     // Render to UI
     renderCard(playerCard, "card");
     renderCard(enemyCard, "enemyCard");
@@ -128,6 +131,8 @@ class Player {
     if (nextRoom) {
       this.currentRoom = nextRoom;
       updateImage(nextRoom.roomImage, nextRoom.name);
+      // Clear the game log
+      gameLog.innerHTML = "";
       return `You move to the ${nextRoom.name}. ${nextRoom.describe()}`;
     }
     return `You can't go to ${exitKey} from here.`;
@@ -168,6 +173,16 @@ function updateImage(src, alt) {
   gameImage.alt = alt;
 }
 
+// Load Local Storage for Defeated Characters
+function loadDefeatedStates(characters) {
+  const defeated = JSON.parse(localStorage.getItem("defeatedCharacters")) || {};
+  characters.forEach((char) => {
+    if (defeated[char.name]) {
+      char.hasBeenDefeated = true;
+    }
+  });
+}
+
 // ----- Setup world -----
 // Ensure Card and Battle are loaded before this script
 
@@ -175,7 +190,7 @@ function updateImage(src, alt) {
 const lunaCard = new Card("Luna", 9, 32);
 const lorenzoCard = new Card("Lorenzo", 10, 34);
 
-// NPCs without battles (define guard/merchant you referenced)
+// NPCs without battles
 const guard = new Character("Guard", { default: "Stay vigilant, stranger." });
 const merchant = new Character("Merchant", {
   default: "I sell rare boosters.",
@@ -202,6 +217,9 @@ lorenzo.postBattleDialogue =
   "You only won because I'm a kid... I'll be back when I'm older!";
 
 const booster = new Item("Booster", "Enhances your card’s power.");
+
+// Load defeated states
+loadDefeatedStates([luna, lorenzo]);
 
 // Rooms
 const mainLobby = new Room(

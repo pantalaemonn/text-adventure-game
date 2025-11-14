@@ -24,7 +24,7 @@ class Card {
     // Add animation class
     cardElement.classList.add("damage-animation", "flash");
 
-    // Remove
+    // Remove after 0.5s
     setTimeout(() => {
       cardElement.classList.remove("damage-animation", "flash");
     }, 500);
@@ -71,6 +71,7 @@ class Battle {
   }
 }
 
+// Render card stats to UI
 function renderCard(card, elementId) {
   const cardElement = document.getElementById(elementId);
   cardElement.querySelector(".cardname h3").textContent = card.name;
@@ -78,46 +79,85 @@ function renderCard(card, elementId) {
   cardElement.querySelector(".health h3").textContent = card.health;
 }
 
+// Helper: mark opponent defeated and save to localStorage
+function markDefeated(opponent) {
+  if (!opponent) return;
+  opponent.hasBeenDefeated = true;
+
+  const key = opponent.name.toLowerCase();
+  const defeated = JSON.parse(localStorage.getItem("defeatedCharacters")) || {};
+  defeated[key] = true;
+  localStorage.setItem("defeatedCharacters", JSON.stringify(defeated));
+}
+
 // Hook up UI
-const logDiv = document.getElementById("battleLog");
 const attackBtn = document.getElementById("attackBtn");
+const logDiv = document.getElementById("battleLog");
 
 attackBtn.addEventListener("click", () => {
   const battle = player.currentBattle;
   if (!battle) return; // no active battle
 
+  // PLAYER TURN
   const result = battle.playTurn();
   logDiv.innerHTML += result + "<br><br>";
-
   renderCard(battle.playerCard, "card");
   renderCard(battle.enemyCard, "enemyCard");
 
-  if (!battle.enemyCard.isDefeated()) {
-    setTimeout(() => {
-      const enemyResult = battle.playTurn();
-      logDiv.innerHTML += enemyResult + "<br><br>";
-      renderCard(battle.playerCard, "card");
-      renderCard(battle.enemyCard, "enemyCard");
-
-      if (battle.playerCard.isDefeated()) {
-        attackBtn.disabled = true;
-      }
-    }, 800);
-  }
-
-  if (battle.playerCard.isDefeated() || battle.enemyCard.isDefeated()) {
+  // If enemy died on player's turn
+  if (battle.enemyCard.isDefeated()) {
     attackBtn.disabled = true;
-
-    // Mark opponent as defeated
     const opponent = player.currentRoom.characters.find(
-      (c) => c.name.toLowerCase() === battle.enemyCard.name.toLowerCase()
+      (c) =>
+        c.card &&
+        c.card.name.toLowerCase() === battle.enemyCard.name.toLowerCase()
     );
-    if (opponent) {
-      opponent.hasBeenDefeated = true;
-    }
-
-    // Hide battle system, show game image again
+    markDefeated(opponent);
     document.getElementById("battleSystem").style.display = "none";
     document.getElementById("gameImage").style.display = "block";
+    logDiv.innerHTML = ""; // Clear battle log
+    log(player.currentRoom.describe());
+    updateImage(player.currentRoom.roomImage, player.currentRoom.name);
+
+    player.currentBattle = null;
+    return;
   }
+
+  // ENEMY TURN (auto) if battle continues
+  setTimeout(() => {
+    const enemyResult = battle.playTurn();
+    logDiv.innerHTML += enemyResult + "<br><br>";
+    renderCard(battle.playerCard, "card");
+    renderCard(battle.enemyCard, "enemyCard");
+
+    // If player died
+    if (battle.playerCard.isDefeated()) {
+      attackBtn.disabled = true;
+      document.getElementById("battleSystem").style.display = "none";
+      document.getElementById("gameImage").style.display = "block";
+      log(player.currentRoom.describe());
+      updateImage(player.currentRoom.roomImage, player.currentRoom.name);
+      player.currentBattle = null;
+      return;
+    }
+
+    // If enemy died on enemy's turn
+    if (battle.enemyCard.isDefeated()) {
+      attackBtn.disabled = true;
+      const opponent = player.currentRoom.characters.find(
+        (c) =>
+          c.card &&
+          c.card.name.toLowerCase() === battle.enemyCard.name.toLowerCase()
+      );
+      markDefeated(opponent);
+
+      document.getElementById("battleSystem").style.display = "none";
+      document.getElementById("gameImage").style.display = "block";
+      log(player.currentRoom.describe());
+      updateImage(player.currentRoom.roomImage, player.currentRoom.name);
+
+      player.currentBattle = null;
+      return;
+    }
+  }, 800);
 });
