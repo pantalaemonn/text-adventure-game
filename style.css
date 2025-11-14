@@ -134,6 +134,7 @@ h3 {
 
 #gameLog {
   color: #d9c9d3;
+  line-height: 1.4rem;
   overflow-y: auto;
 }
 #commandInput {

@@ -107,5 +107,17 @@ attackBtn.addEventListener("click", () => {
 
   if (battle.playerCard.isDefeated() || battle.enemyCard.isDefeated()) {
     attackBtn.disabled = true;
+
+    // Mark opponent as defeated
+    const opponent = player.currentRoom.characters.find(
+      (c) => c.name.toLowerCase() === battle.enemyCard.name.toLowerCase()
+    );
+    if (opponent) {
+      opponent.hasBeenDefeated = true;
+    }
+
+    // Hide battle system, show game image again
+    document.getElementById("battleSystem").style.display = "none";
+    document.getElementById("gameImage").style.display = "block";
   }
 });

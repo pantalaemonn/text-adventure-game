@@ -30,9 +30,14 @@ class Character {
     this.name = name;
     this.dialogue = dialogue;
     this.card = card;
+    this.hasBeenDefeated = false; // track battle outcome
+    this.postBattleDialogue = null; // optional dialogue after defeat
   }
 
   talk() {
+    if (this.hasBeenDefeated && this.postBattleDialogue) {
+      return `${this.name} says: "${this.postBattleDialogue}"`;
+    }
     return `${this.name} says: "${this.dialogue.default}"`;
   }
 }
@@ -60,6 +65,8 @@ class Player {
       (c) => c.name.toLowerCase() === opponentName.toLowerCase()
     );
     if (!opponent) return `No one named ${opponentName} here to battle.`;
+    if (opponent.hasBeenDefeated)
+      return `${opponent.name} has already been defeated.`;
     if (!opponent.card) return `${opponent.name} doesn’t have a battle card.`;
 
     // Fresh copies so health resets each battle
@@ -179,16 +186,20 @@ const luna = new Character(
   "Luna",
   {
     default:
-      "Welcome, glad you could make it! Choose your Starter card: Fox, Wolf, or Owl.",
+      "Welcome, glad you could make it! Want a warm-up battle before you start? Just type 'battle' and then my name!",
   },
   lunaCard
 );
+luna.postBattleDialogue =
+  "You fought bravely… I’ll be cheering you on from here!";
 
 const lorenzo = new Character(
   "Lorenzo",
   { default: "Wowzers, you're a grown-up! Go easy on me, okay?" },
   lorenzoCard
 );
+lorenzo.postBattleDialogue =
+  "You only won because I'm a kid... I'll be back when I'm older!";
 
 const booster = new Item("Booster", "Enhances your card’s power.");
 
@@ -211,7 +222,7 @@ const northWing = new Room(
 
 // Map
 mainLobby.connect("north", northWing);
-northWing.connect("south", mainLobby);
+northWing.connect("lobby", mainLobby);
 
 // Player & Game
 const player = new Player("Hero", mainLobby);
