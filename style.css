@@ -145,6 +145,10 @@ h3 {
   padding: 8px 12px;
 }
 
+#champion {
+  display: none;
+}
+
 /* Card shake animation */
 @keyframes shake {
   0% {

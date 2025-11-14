@@ -79,7 +79,7 @@ function renderCard(card, elementId) {
   cardElement.querySelector(".health h3").textContent = card.health;
 }
 
-// Helper: mark opponent defeated and save to localStorage
+// Mark opponent defeated and save to localStorage
 function markDefeated(opponent) {
   if (!opponent) return;
   opponent.hasBeenDefeated = true;
@@ -88,6 +88,24 @@ function markDefeated(opponent) {
   const defeated = JSON.parse(localStorage.getItem("defeatedCharacters")) || {};
   defeated[key] = true;
   localStorage.setItem("defeatedCharacters", JSON.stringify(defeated));
+
+  // Add Medallions to inventory
+  if (opponent.name.toLowerCase() === "luna") {
+    player.inventory.push(starterMedallion);
+    log("You received the Starter Medallion!");
+  } else if (opponent.name.toLowerCase() === "lorenzo") {
+    player.inventory.push(northernMedallion);
+    log("You received the Northern Medallion!");
+  } else if (opponent.name.toLowerCase() === "isabel") {
+    player.inventory.push(easternMedallion);
+    log("You received the Eastern Medallion!");
+  } else if (opponent.name.toLowerCase() === "flynn") {
+    player.inventory.push(southernMedallion);
+    log("You received the Southern Medallion!");
+  } else if (opponent.name.toLowerCase() === "boss") {
+    player.inventory.push(westernMedallion);
+    log("You received the Western Medallion!");
+  }
 }
 
 // Hook up UI

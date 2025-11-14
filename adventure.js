@@ -128,14 +128,32 @@ class Player {
 
   move(exitKey) {
     const nextRoom = this.currentRoom.exits[exitKey.toLowerCase()];
-    if (nextRoom) {
-      this.currentRoom = nextRoom;
-      updateImage(nextRoom.roomImage, nextRoom.name);
-      // Clear the game log
-      gameLog.innerHTML = "";
-      return `You move to the ${nextRoom.name}. ${nextRoom.describe()}`;
+    if (!nextRoom) {
+      return `You can't go to ${exitKey} from here.`;
     }
-    return `You can't go to ${exitKey} from here.`;
+
+    // West Wing Locked
+    if (nextRoom.name === "West Wing") {
+      const medallions = [
+        "Starter Medallion",
+        "Northern Medallion",
+        "Eastern Medallion",
+        "Southern Medallion",
+      ];
+      const hasAllMedallions = medallions.every((m) =>
+        this.inventory.some((item) => item.name === m)
+      );
+
+      if (!hasAllMedallions) {
+        return "You aren't ready for the West Wing yet... collect all the available medallions first.";
+      }
+    }
+
+    // Normal movement
+    this.currentRoom = nextRoom;
+    updateImage(nextRoom.roomImage, nextRoom.name);
+    gameLog.innerHTML = ""; // clear adventure log
+    return `You move to the ${nextRoom.name}. ${nextRoom.describe()}`;
   }
 }
 
@@ -160,6 +178,15 @@ class Game {
         return this.player.move(target);
       case "battle":
         return this.player.startBattle(target);
+      // Show Inventory
+      case "inventory":
+        if (this.player.inventory.length === 0) {
+          return "Your inventory is empty.";
+        }
+        return (
+          "You are carrying: " +
+          this.player.inventory.map((item) => item.name).join(", ")
+        );
       default:
         return "Unknown command.";
     }
