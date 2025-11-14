@@ -189,6 +189,9 @@ function loadDefeatedStates(characters) {
 // Character Cards
 const lunaCard = new Card("Luna", 9, 32);
 const lorenzoCard = new Card("Lorenzo", 10, 34);
+const isabelCard = new Card("Isabel", 11, 36);
+const flynnCard = new Card("Flynn", 11, 36);
+const bossCard = new Card("Boss", 12, 37);
 
 // NPCs without battles
 const guard = new Character("Guard", { default: "Stay vigilant, stranger." });
@@ -216,10 +219,57 @@ const lorenzo = new Character(
 lorenzo.postBattleDialogue =
   "You only won because I'm a kid... I'll be back when I'm older!";
 
+const isabel = new Character(
+  "Isabel",
+  { default: "You sure you're ready for me, rookie?" },
+  isabelCard
+);
+isabel.postBattleDialogue = "Pfft, well played. Here's my medallion...";
+
+const flynn = new Character(
+  "Flynn",
+  { default: "For Hyrule! I mean- uhm forget I said that..." },
+  flynnCard
+);
+flynn.postBattleDialogue =
+  "I'm not strong enough to defeat Ganandorf yet... Here's my medallion.";
+
+const boss = new Character(
+  "Boss",
+  {
+    default:
+      "You're sweet, boy. But my family have played this game for generations... I wish you the best!",
+  },
+  bossCard
+);
+boss.postBattleDialogue =
+  "I- I lost..... You truly are the champion. Head to the lobby for your prize.";
+
+// Items
 const booster = new Item("Booster", "Enhances your card’s power.");
+const starterMedallion = new Item(
+  "Starter Medallion",
+  "Awarded for defeating Luna."
+);
+const northernMedallion = new Item(
+  "Northern Medallion",
+  "Awarded for defeating Lorenzo."
+);
+const easternMedallion = new Item(
+  "Eastern Medallion",
+  "Awarded for defeating Isabel."
+);
+const southernMedallion = new Item(
+  "Southern Medallion",
+  "Awarded for defeating Flynn."
+);
+const westernMedallion = new Item(
+  "Western Medallion",
+  "Awarded for defeating the Boss."
+);
 
 // Load defeated states
-loadDefeatedStates([luna, lorenzo]);
+loadDefeatedStates([luna, lorenzo, isabel, flynn, boss]);
 
 // Rooms
 const mainLobby = new Room(
@@ -238,9 +288,45 @@ const northWing = new Room(
   "north.png"
 );
 
-// Map
+const eastWing = new Room(
+  "East Wing",
+  "A girl greets you on entering. 'So, the young upstart has come for his bounty, huh? I'm Isabel, and you can take it from my cold, dead hands, runt!!",
+  [isabel],
+  [booster],
+  "east.png"
+);
+
+const southWing = new Room(
+  "South Wing",
+  "A man greets you on entering, he appears to be cosplaying a famous Nintendo character?! 'Zelda expects big things of me, I'll have to defeat you if I want to impress her. My name's Link by the wa- I mean, I'm Flynn, nice to meet you warrior!",
+  [flynn],
+  [booster],
+  "south.png"
+);
+
+const westWing = new Room(
+  "West Wing",
+  "The air is heavy with tension, as the lights slowly turn brighter to reveal.... Luna?! 'Yes, sweetheart... I am the only obstacle standing between you and super card stardom. Let us embark on a battle for the ages!'",
+  [boss],
+  [booster],
+  "west.png"
+);
+
+// Map North
 mainLobby.connect("north", northWing);
 northWing.connect("lobby", mainLobby);
+
+// Map East
+mainLobby.connect("east", eastWing);
+eastWing.connect("lobby", mainLobby);
+
+// Map South
+mainLobby.connect("south", southWing);
+southWing.connect("lobby", mainLobby);
+
+// Map West
+mainLobby.connect("west", westWing);
+westWing.connect("lobby", mainLobby);
 
 // Player & Game
 const player = new Player("Hero", mainLobby);
